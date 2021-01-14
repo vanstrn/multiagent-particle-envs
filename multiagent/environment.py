@@ -197,7 +197,7 @@ class MultiAgentEnv(gym.Env):
         self.render_geoms_xform = None
 
     # render environment
-    def render(self, mode='human'):
+    def render(self, mode='human',silent=True):
         if mode == 'human':
             alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
             message = ''
@@ -210,7 +210,8 @@ class MultiAgentEnv(gym.Env):
                     else:
                         word = alphabet[np.argmax(other.state.c)]
                     message += (other.name + ' to ' + agent.name + ': ' + word + '   ')
-            print(message)
+            if not silent:
+                print(message)
 
         for i in range(len(self.viewers)):
             # create viewers (if necessary)
