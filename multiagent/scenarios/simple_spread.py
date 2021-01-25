@@ -98,3 +98,25 @@ class Scenario(BaseScenario):
             comm.append(other.state.c)
             other_pos.append(other.state.p_pos - agent.state.p_pos)
         return np.concatenate([agent.state.p_vel] + [agent.state.p_pos] + entity_pos + other_pos + comm)
+
+    def state(self, world):
+        #Getting the absolute
+        entity_pos = []
+        for entity in world.landmarks:
+            entity_pos.append(entity.state.p_pos)
+
+        entity_color = []
+        for entity in world.landmarks:  # world.entities:
+            entity_color.append(entity.color)
+
+        # communication of all other agents
+        other_pos = []
+        other_vel = []
+        comm = []
+        for other in world.agents:
+            # comm.append(other.state.c)
+            other_pos.append(other.state.p_pos)
+            comm.append(other.state.c)
+            other_vel.append(other.state.p_vel)
+
+        return np.concatenate(entity_pos + other_pos + other_vel + entity_color + comm)

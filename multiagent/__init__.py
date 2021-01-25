@@ -35,7 +35,8 @@ register(
     kwargs={"world":scenario.make_world(),
         "reset_callback":scenario.reset_world,
         "reward_callback":scenario.reward,
-        "observation_callback":scenario.observation}
+        "observation_callback":scenario.observation,
+        "state_callback":scenario.state}
 )
 
 scenario = scenarios.load("simple_spread.py").Scenario()
@@ -46,7 +47,8 @@ register(
     kwargs={"world":scenario.make_world(),
         "reset_callback":scenario.reset_world,
         "reward_callback":scenario.reward,
-        "observation_callback":scenario.observation}
+        "observation_callback":scenario.observation,
+        "state_callback":scenario.state}
 )
 
 scenario = scenarios.load("simple_speaker_listener.py").Scenario()

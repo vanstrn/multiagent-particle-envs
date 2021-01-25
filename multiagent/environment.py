@@ -13,7 +13,7 @@ class MultiAgentEnv(gym.Env):
 
     def __init__(self, world, reset_callback=None, reward_callback=None,
                  observation_callback=None, info_callback=None,
-                 done_callback=None, shared_viewer=True):
+                 done_callback=None, shared_viewer=True, state_callback=None):
 
         self.world = world
         self.agents = self.world.policy_agents
@@ -25,6 +25,7 @@ class MultiAgentEnv(gym.Env):
         self.observation_callback = observation_callback
         self.info_callback = info_callback
         self.done_callback = done_callback
+        self.state_callback = state_callback
         # environment parameters
         self.discrete_action_space = True
         # if true, action is a number 0...N, otherwise action is a one-hot N-dimensional vector
@@ -68,6 +69,9 @@ class MultiAgentEnv(gym.Env):
             obs_dim = len(observation_callback(agent, self.world))
             self.observation_space.append(spaces.Box(low=-np.inf, high=+np.inf, shape=(obs_dim,), dtype=np.float32))
             agent.action.c = np.zeros(self.world.dim_c)
+        if self.state_callback is not None:
+            state_dim = len(state_callback(self.world))
+            self.state_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(state_dim,), dtype=np.float32)
 
         # rendering
         self.shared_viewer = shared_viewer
@@ -115,6 +119,14 @@ class MultiAgentEnv(gym.Env):
             obs_n.append(self._get_obs(agent))
         return obs_n
 
+    def get_env_info(self):
+        info = {"state_shape": self.state_space,
+                "obs_shape": self.observation_space[0],
+                "n_actions": self.action_space[0],
+                "n_agents": self.n,
+                "episode_limit": 1000}
+        return info
+
     # get info used for benchmarking
     def _get_info(self, agent):
         if self.info_callback is None:
@@ -126,6 +138,12 @@ class MultiAgentEnv(gym.Env):
         if self.observation_callback is None:
             return np.zeros(0)
         return self.observation_callback(agent, self.world)
+    # get observation for a particular agent
+    
+    def get_state(self):
+        if self.observation_callback is None:
+            return np.zeros(0)
+        return self.state_callback(self.world)
 
     # get dones for a particular agent
     # unused right now -- agents are allowed to go beyond the viewing screen
