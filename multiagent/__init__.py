@@ -44,7 +44,18 @@ register(
     id='CooperativeNavigation-v0',
     entry_point='multiagent.environment:MultiAgentEnv',
     max_episode_steps=100,
-    kwargs={"world":scenario.make_world(),
+    kwargs={"world":scenario.make_world(n_agents=3),
+        "reset_callback":scenario.reset_world,
+        "reward_callback":scenario.reward,
+        "observation_callback":scenario.observation,
+        "state_callback":scenario.state}
+)
+scenario = scenarios.load("simple_spread.py").Scenario()
+register(
+    id='CooperativeNavigation-v1',
+    entry_point='multiagent.environment:MultiAgentEnv',
+    max_episode_steps=100,
+    kwargs={"world":scenario.make_world(n_agents=5),
         "reset_callback":scenario.reset_world,
         "reward_callback":scenario.reward,
         "observation_callback":scenario.observation,
